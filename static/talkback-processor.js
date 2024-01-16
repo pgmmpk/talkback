@@ -1,8 +1,9 @@
 class TalkBackProcessor extends AudioWorkletProcessor {
     constructor({ processorOptions = {} }) {
         super();
-        const { sampleRate = 48000 } = processorOptions;
+        const { sampleRate = 48000, silencePrefill=200 } = processorOptions;
         this.sampleRate = sampleRate;
+        this.silencePrefill = silencePrefill;
         this.mode = 'waiting';
         this.buffer = [];
         this.silence = 0;
@@ -68,12 +69,15 @@ class TalkBackProcessor extends AudioWorkletProcessor {
 
             if (!silence) {
                 this.mode = 'listening';
-                this.buffer.push(...batch);
                 this.port.postMessage(['mode', {
                     mode: 'listening'
                 }]);
                 this.silence = 0;
-            } 
+            }
+            this.buffer.push(...batch);
+            if (this.buffer.length > this.silencePrefill) {
+                this.buffer = this.buffer.slice(this.buffer.length - this.silencePrefill);
+            }
 
             return true;
         } else if (this.mode == 'listening') {
