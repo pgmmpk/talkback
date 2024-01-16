@@ -34,7 +34,7 @@ export class DrawOscillogramm {
         canvasCtx.fillStyle = "rgb(255, 255, 255)";
         canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
         
-        canvasCtx.lineWidth = 0.25;
+        canvasCtx.lineWidth = 0.5;
         // canvasCtx.strokeStyle = "rgb(0, 0, 0)";
         canvasCtx.beginPath();
         const sliceWidth = WIDTH / this.bufferLength;
