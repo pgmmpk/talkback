@@ -37,21 +37,30 @@
     }
 
     let active = $state(false);
+    let needPermission = $state(false);
     let drawing;
     async function toggleTalkback() {
         if (talkbackAudio === null) {
-            talkbackAudio = await talkback({ threshold, sensitivity });
-            talkbackAudio.threshold = threshold;
-            talkbackAudio.sensitivity = sensitivity;
-            talkbackAudio.onmessage = onmessage;
-            active = true;
-            drawing = new DrawOscillogramm({
-                analyser: talkbackAudio.analyser,
-                canvasCtx,
-                width: canvas.width,
-                height: canvas.height,
-            });
-            drawing.start();
+            try {
+                talkbackAudio = await talkback({ threshold, sensitivity });
+                talkbackAudio.threshold = threshold;
+                talkbackAudio.sensitivity = sensitivity;
+                talkbackAudio.onmessage = onmessage;
+                active = true;
+                needPermission = false;
+                drawing = new DrawOscillogramm({
+                    analyser: talkbackAudio.analyser,
+                    canvasCtx,
+                    width: canvas.width,
+                    height: canvas.height,
+                });
+                drawing.start();
+
+            } catch (err) {
+                console.log(err);
+                needPermission = true;
+                throw err;
+            }
         } else {
             await talkbackAudio.close();
             talkbackAudio = null;
@@ -61,8 +70,8 @@
         }
     }
 </script>
-<div class="flex flex-col items-center">
-<div>
+<div class="flex flex-col items-center content-center h-screen justify-center">
+<div class="text-xl mb-2 font-bold text-gray-700">
     Talk Back
 </div>
 
@@ -80,6 +89,9 @@
     {/if}
 </button>
 </div>
+{#if needPermission}
+<div class="text-red-700 text-2xl border border-2 border-red-700 rounded-full mb-2 px-4">Please allow access to microphone</div>
+{/if}
 
 <div>
 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 inline">
@@ -109,7 +121,7 @@
 
 <!-- <div>{mode} ({buffers})</div> -->
 
-<div class="border w-1/3">
+<div class="border w-2/3 md:w-1/3">
     <canvas class="w-full h-[100px] block" bind:this={canvas} />
 </div>
 </div>
