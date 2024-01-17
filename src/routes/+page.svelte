@@ -76,7 +76,7 @@
 </div>
 
 <div class="text-gray-500 mb-4">
-<button onclick={toggleTalkback}>
+<button onclick={toggleTalkback} aria-label="toggle talk">
     {#if active}
     <svg class="md:w-24 md:h-24 w-48 h-48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke-width="1.5" stroke="currentColor" >
         <path stroke-linecap="round" stroke-linejoin="round"d="M6 18.4V5.6C6 5.26863 6.26863 5 6.6 5H9.4C9.73137 5 10 5.26863 10 5.6V18.4C10 18.7314 9.73137 19 9.4 19H6.6C6.26863 19 6 18.7314 6 18.4Z" />
@@ -97,15 +97,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 inline">
     <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z" />
 </svg>
-<input type="range" id="sensitivity" name="sensitivity" min="0.0" max="0.2" step="0.01" value={sensitivity} onchange={e => sensitivity=e.target.value} disabled={!active} />
+<input type="range" id="sensitivity" name="sensitivity" aria-label="Sensitivity" min="0.0" max="0.2" step="0.01" value={sensitivity} onchange={e => sensitivity=e.target.value} disabled={!active} />
 <div class="w-12 inline-block">{sensitivity}</div>
 </div>
 
-<div>
+<div class="mt-8">
 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 inline">
     <path stroke-linecap="round" stroke-linejoin="round" d="M6 13.5V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 9.75V10.5" />
 </svg>
-<input type="range" id="silence-threshold-millis" name="silence-threshold-millis" min="100" max="5000" step="10" value={threshold} onchange={e => threshold = e.target.value} disabled={!active}/>
+<input type="range" id="silence-threshold-millis" name="silence-threshold-millis" aria-label="Silence Threhold" min="100" max="5000" step="10" value={threshold} onchange={e => threshold = e.target.value} disabled={!active}/>
 <div class="w-12 inline-block">{threshold}</div>
 </div>
 
