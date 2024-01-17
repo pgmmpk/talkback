@@ -11,6 +11,9 @@ const config = {
 		adapter: adapter()
 	},
 	preprocess: vitePreprocess(),
+	output: {
+		preloadStrategy: 'preload-js',
+	}
 };
 
 export default config;
