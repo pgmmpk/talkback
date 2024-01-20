@@ -9,10 +9,10 @@
     "theme_color": "#000000",
     "icons": [
         {
-            "src": "/talkback.png",
-            "sizes": "512x512",
-            "purpose": "any maskable",
-            "type": "image/png"
+            "src": "/talkback.svg",
+            "sizes": "any",
+            "purpose": "any",
+            "type": "image/svg+xml"
         }
     ]
 }
