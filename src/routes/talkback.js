@@ -22,8 +22,15 @@ export async function talkback(options = {}) {
     const karrrtSilenceThresholdMillis = talkbackNode.parameters.get("silenceThresholdMillis");
     karrrtSilenceThresholdMillis.setValueAtTime(threshold, audioContext.currentTime);
 
+    async function close() {
+        for (const track of stream.getTracks()) {
+            track.stop();
+        }
+        await audioContext.close();
+    }
+
     const out = {
-        async close() { await audioContext.close(); },
+        close,
         get analyser() { return analyser; },
         get sensitivity() { return karrrtSensitivity.value; },
         set sensitivity(value) { karrrtSensitivity.setValueAtTime(value, audioContext.currentTime); },
