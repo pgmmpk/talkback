@@ -67,6 +67,7 @@
             active = false;
             drawing.stop();
             drawing = null;
+            mode = 'waiting';
         }
     }
 </script>

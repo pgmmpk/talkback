@@ -20,20 +20,29 @@ export class DrawOscillogramm {
 
     stop () {
         cancelAnimationFrame(this.drawVisual);
+        this.clearCanvas();
         this.drawVisual = undefined;
     }
 
-    draw () {
-        this.drawVisual = requestAnimationFrame(this.draw);
-        this.analyser.getByteTimeDomainData(this.dataArray);
-
+    clearCanvas() {
         const canvasCtx = this.canvasCtx;
         const WIDTH = this.width;
         const HEIGHT = this.height;
 
         canvasCtx.fillStyle = "rgb(255, 255, 255)";
         canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-        
+    }
+
+    draw () {
+        this.drawVisual = requestAnimationFrame(this.draw);
+        this.analyser.getByteTimeDomainData(this.dataArray);
+
+        this.clearCanvas();
+
+        const canvasCtx = this.canvasCtx;
+        const WIDTH = this.width;
+        const HEIGHT = this.height;
+
         canvasCtx.lineWidth = 1.5;
         canvasCtx.strokeStyle = "rgb(50, 50, 50)";
         canvasCtx.beginPath();
