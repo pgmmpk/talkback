@@ -83,6 +83,7 @@ class TalkBackProcessor extends AudioWorkletProcessor {
         } else if (this.mode == 'listening') {
             const silenceThresholdMillis = parameters.silenceThresholdMillis[0];
             let silence = true;
+            let numSamples = 0;
             const batch = [];
             for (let inputNum = 0; inputNum < sourceLimit; inputNum++) {
                 let input = inputList[inputNum];
@@ -94,6 +95,7 @@ class TalkBackProcessor extends AudioWorkletProcessor {
                 // samples for one channel.
                 for (let channel = 0; channel < channelCount; channel ++) {
                     batch.push(input[channel].slice());
+                    numSamples += input[channel].length;
                 }
 
                 const power = this.sourcePower(input);
@@ -102,20 +104,25 @@ class TalkBackProcessor extends AudioWorkletProcessor {
                 }
             }
 
+            this.buffer.push(...batch);
+
             if (silence) {
-                this.silence += inputList[0][0].length;
+                this.silence += numSamples;
             } else {
                 this.silence = 0;
             }
 
-            if (this.silence * 1000 / this.sampleRate >= silenceThresholdMillis) {
+            if (this.silence >= this.sampleRate * silenceThresholdMillis / 1000) {
+                while (this.silence > 0) {  // remove traling silence
+                    const empty = this.buffer.pop();
+                    this.silence -= empty.length;
+                }
                 this.mode = 'playing';
                 this.silence = 0;
                 this.port.postMessage(['mode', {
                     mode: 'playing'
                 }]);
             } else {
-                this.buffer.push(...batch);
                 if ((this.buffer.length % 100) === 0) {
                     this.port.postMessage(['buffer', {
                         length: this.buffer.length,
