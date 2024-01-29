@@ -7,8 +7,6 @@ const ASSETS = [
     ...files  // everything in `static`
 ];
 
-console.log(ASSETS)
-
 const CACHE = `cache-${version}`;
 
 self.addEventListener('install', (event) => {

@@ -57,7 +57,7 @@
                 drawing.start();
 
             } catch (err) {
-                console.log(err);
+                console.error(err);
                 needPermission = true;
                 throw err;
             }
