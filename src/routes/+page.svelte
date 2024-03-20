@@ -1,8 +1,10 @@
 <script>
     import { talkback } from './talkback.js';
     import { DrawOscillogramm } from './draw.js';
+    import { Waker } from './waker.js';
 
     let talkbackAudio = null;
+    let waker = null;
     let threshold = $state(750);
     let sensitivity = $state(0.05);
     let mode = $state('waiting');
@@ -56,12 +58,16 @@
                 });
                 drawing.start();
 
+                waker = new Waker();
+                await waker.request();
             } catch (err) {
                 console.error(err);
                 needPermission = true;
                 throw err;
             }
         } else {
+            await waker.release();
+            waker = null;
             await talkbackAudio.close();
             talkbackAudio = null;
             active = false;
