@@ -118,11 +118,30 @@
 
 <div class="md:mb-8 mb-8 mt-8 text-gray-400">
     {#if mode === 'listening'}
-    <svg class="w-10 h-10 inline" class:text-blue-700={active} viewBox="0 0 24 24" stroke-width="1.5" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor"><path d="M14 21H4C2.89543 21 2 20.1046 2 19V5C2 3.89543 2.89543 3 4 3H20C21.1046 3 22 3.89543 22 5V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M2 7L22 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M5 5.01L5.01 4.99889" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M8 5.01L8.01 4.99889" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M11 5.01L11.01 4.99889" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M19.5 22V16M19.5 16L17 18.5M19.5 16L22 18.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    <svg class="w-16 h-16 inline" class:text-blue-700={active} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor">
+        <path d="M 45 90 C 20.187 90 0 69.813 0 45 C 0 20.187 20.187 0 45 0 c 24.813 0 45 20.187 45 45 C 90 69.813 69.813 90 45 90 z M 45 4 C 22.393 4 4 22.393 4 45 s 18.393 41 41 41 s 41 -18.393 41 -41 S 67.607 4 45 4 z" />
+        <circle cx="45" cy="45" r="40" stroke="currentColor" stroke-width="8" />
+        <circle cx="31" cy="35.55" r="6" fill="currentColor" />
+        <circle cx="59" cy="35.55" r="6" fill="currentColor" />
+        <path d="M 45 74 c -6.197 0 -11.239 -5.042 -11.239 -11.239 S 38.803 51.521 45 51.521 s 11.239 5.042 11.239 11.239 S 51.197 74 45 74 z M 45 55.521 c -3.992 0 -7.239 3.247 -7.239 7.239 S 41.008 70 45 70 c 3.992 0 7.239 -3.247 7.239 -7.239 S 48.992 55.521 45 55.521 z" stroke="currentColor" fill="currentColor" stroke-width="3" />
+    </svg>
     {:else if mode === 'playing'}
-    <svg class="w-10 h-10 inline" class:text-red-700={active} viewBox="0 0 24 24" stroke-width="1.5" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor"><path d="M12 21H4C2.89543 21 2 20.1046 2 19V5C2 3.89543 2.89543 3 4 3H20C21.1046 3 22 3.89543 22 5V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M2 7L22 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M5 5.01L5.01 4.99889" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M8 5.01L8.01 4.99889" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M11 5.01L11.01 4.99889" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M20.9995 16.05C20.3643 15.402 19.4791 15 18.5 15C16.567 15 15 16.567 15 18.5C15 19.4539 15.3816 20.3187 16.0005 20.95M20.9995 16.05C21.6184 16.6813 22 17.5461 22 18.5C22 20.433 20.433 22 18.5 22C17.5209 22 16.6357 21.598 16.0005 20.95M20.9995 16.05L16.0005 20.95" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    <svg class="w-16 h-16 inline" class:text-red-700={active} viewBox="0 0 100 100" stroke-width="1.5" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor">
+        <path d="M 45 90 C 20.187 90 0 69.813 0 45 C 0 20.187 20.187 0 45 0 c 24.813 0 45 20.187 45 45 C 90 69.813 69.813 90 45 90 z M 45 4 C 22.393 4 4 22.393 4 45 s 18.393 41 41 41 s 41 -18.393 41 -41 S 67.607 4 45 4 z" />
+        <circle cx="45" cy="45" r="40" stroke="currentColor" stroke-width="8" />
+        <circle cx="31" cy="35.55" r="6" fill="currentColor" />
+        <circle cx="59" cy="35.55" r="6" fill="currentColor" />
+        <path d="M 38.71 70.626 c -0.512 0 -1.023 -0.195 -1.414 -0.586 c -0.781 -0.781 -0.781 -2.047 0 -2.828 l 12.579 -12.579 c 0.781 -0.781 2.047 -0.781 2.828 0 s 0.781 2.047 0 2.828 L 40.125 70.04 C 39.734 70.431 39.222 70.626 38.71 70.626 z" stroke="currentColor" fill="currentColor" stroke-width="4" />
+        <path d="M 51.289 70.626 c -0.512 0 -1.023 -0.195 -1.414 -0.586 L 37.296 57.461 c -0.781 -0.781 -0.781 -2.047 0 -2.828 c 0.78 -0.781 2.047 -0.781 2.828 0 l 12.579 12.579 c 0.781 0.781 0.781 2.047 0 2.828 C 52.313 70.431 51.801 70.626 51.289 70.626 z" stroke="currentColor" fill="currentColor" stroke-width="4" />
+    </svg>
     {:else}
-    <svg class="w-10 h-10 inline" class:text-gray-700={active} viewBox="0 0 24 24" stroke-width="1.5" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor"><path d="M16 21H4C2.89543 21 2 20.1046 2 19V5C2 3.89543 2.89543 3 4 3H20C21.1046 3 22 3.89543 22 5V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M19 17L19 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M22 17L22 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M2 7L22 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M5 5.01L5.01 4.99889" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M8 5.01L8.01 4.99889" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M11 5.01L11.01 4.99889" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    <svg class="w-16 h-16 inline" class:text-gray-700={active} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor">
+        <path d="M 45 90 C 20.187 90 0 69.813 0 45 C 0 20.187 20.187 0 45 0 c 24.813 0 45 20.187 45 45 C 90 69.813 69.813 90 45 90 z M 45 4 C 22.393 4 4 22.393 4 45 s 18.393 41 41 41 s 41 -18.393 41 -41 S 67.607 4 45 4 z" />
+        <circle cx="45" cy="45" r="40" stroke="currentColor" stroke-width="8" />
+        <circle cx="31" cy="35.55" r="6" fill="currentColor" />
+        <circle cx="59" cy="35.55" r="6" fill="currentColor" />
+        <path d="M 45 69.345 c -7.954 0 -15.337 -3.969 -19.751 -10.617 c -0.611 -0.92 -0.36 -2.162 0.56 -2.772 c 0.92 -0.613 2.162 -0.36 2.772 0.56 c 3.671 5.529 9.809 8.83 16.419 8.83 c 6.61 0 12.748 -3.301 16.419 -8.83 c 0.61 -0.921 1.85 -1.173 2.772 -0.56 c 0.92 0.61 1.171 1.853 0.56 2.772 C 60.337 65.376 52.953 69.345 45 69.345 z" fill="currentColor" stroke="currentColor" stroke-width="4" />
+    </svg>
     {/if}
 </div>
 
