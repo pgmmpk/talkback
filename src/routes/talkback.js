@@ -1,8 +1,8 @@
 export async function talkback(options = {}) {
-    const { sensitivity = 0.05, threshold = 750 } = options;
+    const { sensitivity = 0.05, threshold = 750, bufferLimit = 100000 } = options;
     const audioContext = new AudioContext();
 
-    const processorOptions = { sampleRate: audioContext.sampleRate };
+    const processorOptions = { sampleRate: audioContext.sampleRate, bufferLimit };
     await audioContext.audioWorklet.addModule("talkback-processor.js");
     const talkbackNode = new AudioWorkletNode(audioContext, "talkback-processor",  { processorOptions });
     await audioContext.resume();

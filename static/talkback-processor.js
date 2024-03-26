@@ -1,12 +1,13 @@
 class TalkBackProcessor extends AudioWorkletProcessor {
     constructor({ processorOptions = {} }) {
         super();
-        const { sampleRate = 48000, silencePrefill=200 } = processorOptions;
+        const { sampleRate = 48000, silencePrefill = 200, bufferLimit = 100000 } = processorOptions;
         this.sampleRate = sampleRate;
         this.silencePrefill = silencePrefill;
         this.mode = 'waiting';
         this.buffer = [];
         this.silence = 0;
+        this.bufferLimit = bufferLimit;
     }
 
     static get parameterDescriptors() {
@@ -107,7 +108,7 @@ class TalkBackProcessor extends AudioWorkletProcessor {
                 this.silence = 0;
             }
 
-            if (this.silence >= this.sampleRate * silenceThresholdMillis * channelCount / 1000) {
+            if ( (this.silence >= this.sampleRate * silenceThresholdMillis * channelCount / 1000) || this.buffer.length >= this.bufferLimit) {
                 while (this.silence > 0) {  // remove traling silence
                     const empty = this.buffer.pop();
                     this.silence -= empty.length;

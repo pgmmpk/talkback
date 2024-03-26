@@ -44,7 +44,7 @@
     async function toggleTalkback() {
         if (talkbackAudio === null) {
             try {
-                talkbackAudio = await talkback({ threshold, sensitivity });
+                talkbackAudio = await talkback({ threshold, sensitivity, bufferLimit: 100000 });
                 talkbackAudio.threshold = threshold;
                 talkbackAudio.sensitivity = sensitivity;
                 talkbackAudio.onmessage = onmessage;
