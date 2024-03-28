@@ -50,7 +50,6 @@ class TalkBackProcessor extends AudioWorkletProcessor {
         const channelCount = Math.min(input.length, output.length);
 
         if (this.mode === 'waiting') {
-            let silence = true;
             const batch = [];
 
             // The input list and output list are each arrays of
@@ -63,10 +62,6 @@ class TalkBackProcessor extends AudioWorkletProcessor {
 
             const power = this.sourcePower(input);
             if (power > sensitivity) {
-                silence = false;
-            }
-
-            if (!silence) {
                 this.mode = 'listening';
                 this.port.postMessage(['mode', {
                     mode: 'listening'
@@ -76,12 +71,11 @@ class TalkBackProcessor extends AudioWorkletProcessor {
 
             this.buffer.push(...batch);
             
-            if (this.buffer.length > this.silencePrefill) {
-                this.buffer = this.buffer.slice(this.buffer.length - this.silencePrefill);
+            while (this.buffer.length > this.silencePrefill) {
+                this.buffer.shift();
             }
         } else if (this.mode == 'listening') {
             const silenceThresholdMillis = parameters.silenceThresholdMillis[0];
-            let silence = true;
             let numSamples = 0;
             const batch = [];
 
@@ -97,19 +91,14 @@ class TalkBackProcessor extends AudioWorkletProcessor {
 
             const power = this.sourcePower(input);
             if (power > sensitivity) {
-                silence = false;
+                this.silence = 0;
+            } else {
+                this.silence += numSamples;
             }
-
             this.buffer.push(...batch);
 
-            if (silence) {
-                this.silence += numSamples;
-            } else {
-                this.silence = 0;
-            }
-
             if ( (this.silence >= this.sampleRate * silenceThresholdMillis * channelCount / 1000) || this.buffer.length >= this.bufferLimit) {
-                while (this.silence > 0) {  // remove traling silence
+                while (this.silence > this.silencePrefill * this.buffer[0].length) {  // remove traling silence (assume all buffrs have same len)
                     const empty = this.buffer.pop();
                     this.silence -= empty.length;
                 }
@@ -135,6 +124,8 @@ class TalkBackProcessor extends AudioWorkletProcessor {
                             length: this.buffer.length,
                         }]);
                     }
+                } else {
+                    output[channel].fill(0);
                 }
             }
 
