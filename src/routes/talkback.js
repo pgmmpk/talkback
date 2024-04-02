@@ -10,12 +10,17 @@ export async function talkback(options = {}) {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const src =  await audioContext.createMediaStreamSource(stream);
     const analyser = audioContext.createAnalyser();
+    const merger = audioContext.createChannelMerger(2);
 
-    src
-        .connect(talkbackNode)
-        .connect(analyser)
-        .connect(audioContext.destination);
+    const tmp = src.connect(talkbackNode);
+    tmp.connect(audioContext.destination);
 
+    src.connect(merger, 0, 0);
+    tmp.connect(merger, 0, 1);
+    const gain = audioContext.createGain();
+    gain.gain.setValueAtTime(2.0, audioContext.currentTime);
+    merger.connect(gain).connect(analyser)
+    
     const karrrtSensitivity = talkbackNode.parameters.get("sensitivity");
     karrrtSensitivity.setValueAtTime(sensitivity, audioContext.currentTime);
 

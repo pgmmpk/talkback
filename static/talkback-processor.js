@@ -71,8 +71,8 @@ class TalkBackProcessor extends AudioWorkletProcessor {
 
             this.buffer.push(...batch);
             
-            while (this.buffer.length > this.silencePrefill) {
-                this.buffer.shift();
+            if (this.buffer.length > this.silencePrefill) {
+                this.buffer.splice(0, this.buffer.length - this.silencePrefill);
             }
         } else if (this.mode == 'listening') {
             const silenceThresholdMillis = parameters.silenceThresholdMillis[0];
