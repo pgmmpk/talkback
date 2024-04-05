@@ -50,13 +50,13 @@
                 talkbackAudio.onmessage = onmessage;
                 active = true;
                 needPermission = false;
-                drawing = new DrawOscillogramm({
-                    analyser: talkbackAudio.analyser,
-                    canvasCtx,
-                    width: canvas.width,
-                    height: canvas.height,
-                });
-                drawing.start();
+                // drawing = new DrawOscillogramm({
+                //     analyser: talkbackAudio.analyser,
+                //     canvasCtx,
+                //     width: canvas.width,
+                //     height: canvas.height,
+                // });
+                // drawing.start();
 
                 waker = new Waker();
                 await waker.request();
@@ -71,7 +71,7 @@
             await talkbackAudio.close();
             talkbackAudio = null;
             active = false;
-            drawing.stop();
+            // drawing.stop();
             drawing = null;
             mode = 'waiting';
         }
