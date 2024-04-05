@@ -8,7 +8,7 @@ export class DrawOscillogramm {
     }
 
     start () {
-        this.analyser.fftSize = 512;
+        this.analyser.fftSize = 2048;
         const bufferLength = this.analyser.fftSize;
 
         // We can use Float32Array instead of Uint8Array if we want higher precision
