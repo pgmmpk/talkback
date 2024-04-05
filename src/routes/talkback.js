@@ -15,11 +15,11 @@ export async function talkback(options = {}) {
     const tmp = src.connect(talkbackNode);
     tmp.connect(audioContext.destination);
 
-    src.connect(merger, 0, 0);
-    tmp.connect(merger, 0, 1);
-    const gain = audioContext.createGain();
-    gain.gain.setValueAtTime(2.0, audioContext.currentTime);
-    merger.connect(gain).connect(analyser)
+    // src.connect(merger, 0, 0);
+    // tmp.connect(merger, 0, 1);
+    // const gain = audioContext.createGain();
+    // gain.gain.setValueAtTime(2.0, audioContext.currentTime);
+    // merger.connect(gain).connect(analyser)
     
     const karrrtSensitivity = talkbackNode.parameters.get("sensitivity");
     karrrtSensitivity.setValueAtTime(sensitivity, audioContext.currentTime);
