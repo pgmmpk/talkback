@@ -1,11 +1,11 @@
 export async function talkback(options = {}) {
     const { sensitivity = 0.05, threshold = 750, bufferLimit = 100000 } = options;
     const audioContext = new AudioContext();
+    audioContext.suspend();
 
     const processorOptions = { sampleRate: audioContext.sampleRate, bufferLimit };
     await audioContext.audioWorklet.addModule("talkback-processor.js");
     const talkbackNode = new AudioWorkletNode(audioContext, "talkback-processor",  { processorOptions });
-    await audioContext.resume();
 
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const src =  await audioContext.createMediaStreamSource(stream);
@@ -15,11 +15,11 @@ export async function talkback(options = {}) {
     const tmp = src.connect(talkbackNode);
     tmp.connect(audioContext.destination);
 
-    // src.connect(merger, 0, 0);
-    // tmp.connect(merger, 0, 1);
-    // const gain = audioContext.createGain();
-    // gain.gain.setValueAtTime(2.0, audioContext.currentTime);
-    // merger.connect(gain).connect(analyser)
+    src.connect(merger, 0, 0);
+    tmp.connect(merger, 0, 1);
+    const gain = audioContext.createGain();
+    gain.gain.setValueAtTime(2.0, audioContext.currentTime);
+    merger.connect(gain).connect(analyser)
     
     const karrrtSensitivity = talkbackNode.parameters.get("sensitivity");
     karrrtSensitivity.setValueAtTime(sensitivity, audioContext.currentTime);
@@ -33,6 +33,8 @@ export async function talkback(options = {}) {
         }
         await audioContext.close();
     }
+
+    await audioContext.resume();
 
     const out = {
         close,

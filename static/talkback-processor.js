@@ -1,3 +1,6 @@
+
+const BUFF_LWEN = 128;
+
 class TalkBackProcessor extends AudioWorkletProcessor {
     constructor({ processorOptions = {} }) {
         super();
@@ -76,7 +79,6 @@ class TalkBackProcessor extends AudioWorkletProcessor {
             }
         } else if (this.mode == 'listening') {
             const silenceThresholdMillis = parameters.silenceThresholdMillis[0];
-            let numSamples = 0;
             const batch = [];
 
             // The input list and output list are each arrays of
@@ -85,45 +87,29 @@ class TalkBackProcessor extends AudioWorkletProcessor {
             for (let channel = 0; channel < channelCount; channel ++) {
                 batch.push(input[channel].slice());
                 output[channel].fill(0);
-
-                numSamples += input[channel].length;
             }
 
             const power = this.sourcePower(input);
             if (power > sensitivity) {
                 this.silence = 0;
             } else {
-                this.silence += numSamples;
+                this.silence += batch.length;
             }
             this.buffer.push(...batch);
 
-            if ( (this.silence >= this.sampleRate * silenceThresholdMillis * channelCount / 1000) || this.buffer.length >= this.bufferLimit) {
-                while (this.silence > this.silencePrefill * this.buffer[0].length) {  // remove traling silence (assume all buffrs have same len)
-                    const empty = this.buffer.pop();
-                    this.silence -= empty.length;
-                }
+            if ( (this.silence >= this.sampleRate * silenceThresholdMillis * channelCount / 1000 / BUFF_LWEN) || this.buffer.length >= this.bufferLimit) {
+                this.buffer.splice(this.buffer.length - this.silence + this.silencePrefill, this.silence - this.silencePrefill);
                 this.mode = 'playing';
                 this.silence = 0;
                 this.port.postMessage(['mode', {
                     mode: 'playing'
                 }]);
-            } else {
-                if ((this.buffer.length % 1000) === 0) {
-                    this.port.postMessage(['buffer', {
-                        length: this.buffer.length,
-                    }]);
-                }
             }
         } else {
             // playback
             for (let channel = 0; channel < channelCount; channel ++) {
                 if (this.buffer.length > 0) {
                     output[channel].set(this.buffer.shift());
-                    if ((this.buffer.length % 1000) === 0) {
-                        this.port.postMessage(['buffer', {
-                            length: this.buffer.length,
-                        }]);
-                    }
                 } else {
                     output[channel].fill(0);
                 }

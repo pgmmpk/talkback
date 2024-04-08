@@ -50,13 +50,13 @@
                 talkbackAudio.onmessage = onmessage;
                 active = true;
                 needPermission = false;
-                // drawing = new DrawOscillogramm({
-                //     analyser: talkbackAudio.analyser,
-                //     canvasCtx,
-                //     width: canvas.width,
-                //     height: canvas.height,
-                // });
-                // drawing.start();
+                drawing = new DrawOscillogramm({
+                    analyser: talkbackAudio.analyser,
+                    canvasCtx,
+                    width: canvas.width,
+                    height: canvas.height,
+                });
+                drawing.start();
 
                 waker = new Waker();
                 await waker.request();
@@ -71,7 +71,7 @@
             await talkbackAudio.close();
             talkbackAudio = null;
             active = false;
-            // drawing.stop();
+            drawing.stop();
             drawing = null;
             mode = 'waiting';
         }
@@ -147,7 +147,7 @@
 
 <!-- <div>{mode} ({buffers})</div> -->
 
-<div class="border border-2 border-gray-500 w-3/4 md:w-1/3">
+<div class="border border-2 border-gray-500 rounded w-3/4 md:w-1/3">
     <canvas class="w-full h-[100px] block" bind:this={canvas} />
 </div>
 </div>
