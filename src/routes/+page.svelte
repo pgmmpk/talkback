@@ -147,7 +147,7 @@
         {/if}
     </div>
 
-    <div class="flex-1 w-3/4 md:w-1/3 flex flex-col items-center">
+    <div class="flex-1 w-3/4 md:w-1/3 flex flex-col justify-center">
         <canvas class="w-full h-[100px] block border border-2 border-gray-500 rounded" bind:this={canvas} />
     </div>
 
