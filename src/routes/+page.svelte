@@ -2,20 +2,19 @@
     import { talkback } from './talkback.js';
     import { DrawOscillogramm } from './draw.js';
     import { Waker } from './waker.js';
+    import { settings } from './settings.svelte.js';
     import SettingsPanel from './SettingsPanel.svelte';
 
     let talkbackAudio = null;
     let waker = null;
-    let threshold = $state(750);
-    let sensitivity = $state(0.05);
     let mode = $state('waiting');
 
     $effect(() => {
-        sensitivity;
-        threshold;
+        settings.sensitivity;
+        settings.threshold;
         if (talkbackAudio !== null) {
-            talkbackAudio.sensitivity = sensitivity;
-            talkbackAudio.threshold = threshold;
+            talkbackAudio.sensitivity = settings.sensitivity;
+            talkbackAudio.threshold = settings.threshold;
         }
     });
 
@@ -37,9 +36,9 @@
     async function toggleTalkback() {
         if (talkbackAudio === null) {
             try {
-                talkbackAudio = await talkback({ threshold, sensitivity, bufferLimit: 100000 });
-                talkbackAudio.threshold = threshold;
-                talkbackAudio.sensitivity = sensitivity;
+                talkbackAudio = await talkback({ ...settings, bufferLimit: 100000 });
+                talkbackAudio.threshold = settings.threshold;
+                talkbackAudio.sensitivity = settings.sensitivity;
                 talkbackAudio.onmessage = onmessage;
                 active = true;
                 needPermission = false;
