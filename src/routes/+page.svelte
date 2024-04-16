@@ -72,7 +72,6 @@
     let settingsVisible = $state(false);
 
     async function share () {
-        alert('Sharing')
         const self = {
             title: 'Talk Back',
             url: 'https://talkback.kroutikov.net',
@@ -80,7 +79,6 @@
         if (navigator.canShare && navigator.canShare(self)) {
             await navigator.share(self);
         }
-        alert('Shared')
     }
 </script>
 <div class="flex flex-col items-center content-center h-screen">
