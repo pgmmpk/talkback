@@ -11,19 +11,19 @@
         {
             "src": "/talkback-maskable-192x192.png",
             "sizes": "192x192",
-            "purpose": "any, maskable",
+            "purpose": "any maskable",
             "type": "image/png"
         },
         {
             "src": "/talkback-maskable-512x512.png",
             "sizes": "512x512",
-            "purpose": "any, maskable",
+            "purpose": "any maskable",
             "type": "image/png"
         },
         {
             "src": "/talkback.svg",
             "sizes": "any",
-            "purpose": "any, maskable",
+            "purpose": "any maskable",
             "type": "image/svg+xml"
         }
     ]
