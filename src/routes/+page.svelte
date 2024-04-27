@@ -84,7 +84,7 @@
 <div class="flex flex-col items-center content-center h-screen">
     <div class="flex-none h-8 flex flex-row mb-4 w-full">
         <div class="grow flex flex-row">
-            <button class="flex-none w-8 m-2 text-gray-700 disabled:text-gray-400 outline-none" onclick={() => { settingsVisible = true; }} >
+            <button aria-label="settings" class="flex-none w-8 m-2 text-gray-700 disabled:text-gray-400 outline-none" onclick={() => { settingsVisible = true; }} >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                 </svg>
@@ -92,7 +92,7 @@
             <div class="grow text-xl md:mb-4 mb-8 mt-2 font-bold text-gray-700 text-center">
                 Talk Back
             </div>
-            <button class="flex-none w-8 m-2 text-gray-700 disabled:text-gray-400 outline-none" onclick={share} >
+            <button arial-label="share" class="flex-none w-8 m-2 text-gray-700 disabled:text-gray-400 outline-none" onclick={share} >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z" />
                 </svg>
