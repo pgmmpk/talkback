@@ -9,19 +9,21 @@
     "theme_color": "#ffffff",
     "icons": [
         {
-            "src": "/android-chrome-192x192.png",
+            "src": "/talkback-maskable-192x192.png",
             "sizes": "192x192",
+            "purpose": "maskable",
             "type": "image/png"
         },
         {
-            "src": "/android-chrome-512x512.png",
+            "src": "/talkback-maskable-512x512.png",
             "sizes": "512x512",
+            "purpose": "maskable",
             "type": "image/png"
         },
         {
             "src": "/talkback.svg",
             "sizes": "any",
-            "purpose": "any",
+            "purpose": "any, maskable",
             "type": "image/svg+xml"
         }
     ]
