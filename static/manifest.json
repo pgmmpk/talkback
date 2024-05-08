@@ -4,26 +4,27 @@
     "short_name": "Talk Back",
     "description": "Talk to youself like a parrot!",
     "start_url": "/",
+    "id": "/",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#ffffff",
     "icons": [
         {
-            "src": "/talkback-maskable-192x192.png",
-            "sizes": "192x192",
-            "purpose": "any maskable",
-            "type": "image/png"
-        },
-        {
             "src": "/talkback-maskable-512x512.png",
             "sizes": "512x512",
-            "purpose": "any maskable",
+            "purpose": "maskable",
             "type": "image/png"
         },
         {
             "src": "/talkback.svg",
             "sizes": "any",
-            "purpose": "any maskable",
+            "purpose": "any",
+            "type": "image/svg+xml"
+        },
+        {
+            "src": "/talkback-maskable.svg",
+            "sizes": "any",
+            "purpose": "maskable",
             "type": "image/svg+xml"
         }
     ]
