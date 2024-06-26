@@ -1,31 +1,119 @@
 
-const BUFF_LWEN = 128;
+const BUFF_LEN = 128;
+
+const MODE_WAITING = 'waiting';
+const MODE_RECORDING = 'recording';
+const MODE_PLAYING = 'playing';
+
+class RingBuffer {
+    constructor (size) {
+        this.size = size;
+        this.data = Array.from({ length: size }).map(() => new Float32Array(BUFF_LEN));
+        this.seek = 0;
+        this.offset = 0;
+    }
+
+    get length () {
+        if (this.seek <= this.offset) {
+            return this.offset - this.seek;
+        } else {
+            return this.size + this.offset - this.seek;
+        }
+    }
+
+    get available () {
+        return this.size - this.length - 1;
+    }
+
+    write (buffer) {
+        if (!this.available) return false
+        this.data[this.offset].set(buffer);
+        this.offset = (this.offset + 1) % this.size;
+        return true;
+    }
+
+    ltrim (num) {
+        if (num > this.length) throw 'Attempt to ltrim more than we have';
+        if (num <= 0) return;
+        this.seek = (this.seek + num) % this.size;
+    }
+
+    rtrim (num) {
+        if (num > this.length) throw 'Attempt to rtrim more than we have';
+        if (num <= 0) return;
+        this.offset = (this.offset - num + this.size) % this.size;
+    }
+
+    clear () {
+        this.seek = 0;
+        this.offset = 0;
+    }
+
+    getRawBuffers(channelCount) {
+        let buffers;
+        if (this.seek <= this.offset) {
+            buffers = this.data.slice(this.seek, this.offset);
+        } else {
+            buffers = this.data.slice(this.seek)
+            buffers.push(...this.data.slice(0, this.offset))
+        }
+
+        const numBuffersPerChannel = Math.floor(buffers.length / channelCount);
+        const out = Array.from({ length: channelCount }).map(() => new Float32Array(numBuffersPerChannel * BUFF_LEN));
+        for (let i = 0; i < numBuffersPerChannel; i++) {
+            for (let c = 0; c < channelCount; c++) {
+                const b = buffers[i*channelCount + c];
+                out[c].set(b, i*BUFF_LEN)
+            }
+        }
+        return out.map(x => x.buffer);
+    }
+}
 
 class TalkBackProcessor extends AudioWorkletProcessor {
     constructor({ processorOptions = {} }) {
         super();
-        const { sampleRate = 48000, silencePrefill = 200, bufferLimit = 100000 } = processorOptions;
-        this.sampleRate = sampleRate;
+        const { silencePrefill, numBuffers, channelCount, silenceThreshold, sensitivity } = processorOptions;
+        if (!silencePrefill) throw 'required option "silencePrefill" not set';
+        if (!numBuffers) throw 'required option "numBufers" not set';
+        if (!channelCount) throw 'required option "channelCount" not set';
+        if (!silenceThreshold) throw 'required option "silenceThreshold" not set';
+        if (!sensitivity) throw 'required option "sensitivity" not set';
         this.silencePrefill = silencePrefill;
-        this.mode = 'waiting';
-        this.buffer = [];
+        this.channelCount = channelCount;
+        this.silenceThreshold = silenceThreshold;
+        this.sensitivity = sensitivity;
+        this.ring = new RingBuffer(numBuffers);
+        this.mode = MODE_WAITING;
         this.silence = 0;
-        this.bufferLimit = bufferLimit;
+        this.port.onmessage = this._handleRequest.bind(this)
+    }
+
+    reset () {
+        this.silence = 0;
+        this.ring.clear();
+        this.mode = MODE_WAITING;
     }
 
     static get parameterDescriptors() {
         return [
             {
-                name: "sensitivity",
+                name: "sensitivity",  // mic amplitude threshold
                 defaultValue: 0.1,
                 minValue: 0,
                 maxValue: 1,
             },
             {
-                name: "silenceThresholdMillis",
-                defaultValue: 500,
+                name: "numSilenceBuffers",  // silence that long triggers mode change
+                defaultValue: 400,
                 minValue: 100,
-                maxValue: 5000,
+                maxValue: 4000,
+            },
+            {
+                name: "silencePrefillBuffers", 
+                defaultValue: 200,
+                minValue: 0,
+                maxValue: 4000,
             },
         ];
     }
@@ -46,96 +134,74 @@ class TalkBackProcessor extends AudioWorkletProcessor {
      * `parameters` is an object containing the `AudioParam` values
      * for the current block of audio data.
      **/
-    process(inputList, outputList, parameters) {
-        const sensitivity = parameters.sensitivity[0];
-        const input = inputList[0]; // we support only one input
-        const output = outputList[0]; // we support only one output
-        const channelCount = Math.min(input.length, output.length);
-
-        if (this.mode === 'waiting') {
-            const batch = [];
-
-            // The input list and output list are each arrays of
-            // Float32Array objects, each of which contains the
-            // samples for one channel.
-            for (let channel = 0; channel < channelCount; channel ++) {
-                batch.push(input[channel].slice());
-                output[channel].fill(0);
-            }
-
-            const power = this.sourcePower(input);
-            if (power > sensitivity) {
-                this.mode = 'listening';
+    process(inputList) {
+        // The input list and output list are each arrays of
+        // Float32Array objects, each of which contains the
+        // samples for one channel.
+        if (this.mode === MODE_WAITING) {
+            const amp = amplitude(...inputList[0]);  // spread over channels
+            if (amp > this.sensitivity) {
+                this.mode = MODE_RECORDING;
                 this.port.postMessage(['mode', {
-                    mode: 'listening'
+                    mode: MODE_RECORDING,
                 }]);
-                this.silence = 0;
             }
 
-            this.buffer.push(...batch);
-            
-            if (this.buffer.length > this.silencePrefill) {
-                this.buffer.splice(0, this.buffer.length - this.silencePrefill);
-            }
-        } else if (this.mode == 'listening') {
-            const silenceThresholdMillis = parameters.silenceThresholdMillis[0];
-            const batch = [];
-
-            // The input list and output list are each arrays of
-            // Float32Array objects, each of which contains the
-            // samples for one channel.
-            for (let channel = 0; channel < channelCount; channel ++) {
-                batch.push(input[channel].slice());
-                output[channel].fill(0);
+            for (const inputBuffer of inputList[0]) {
+                this.ring.write(inputBuffer);
+            }            
+            this.ring.ltrim(this.ring.length - this.silencePrefill);
+        } else if (this.mode == MODE_RECORDING) {
+            for (const inputBuffer of inputList[0]) {
+                this.ring.write(inputBuffer);
             }
 
-            const power = this.sourcePower(input);
-            if (power > sensitivity) {
-                this.silence = 0;
+            if (this.ring.available === 0) {
+                this._shipout('buffer overflow');
+                this.mode = MODE_PLAYING;
+                return true;
+            }
+
+            const amp = amplitude(...inputList[0]);  // spread channels
+            if (amp < this.sensitivity) {
+                this.silence += inputList[0].length;
+                if (this.silence > this.silenceThreshold) {
+                    this.ring.rtrim(this.silenceThreshold);
+                    this._shipout('silence detected');
+                    this.mode = MODE_PLAYING;
+                    return true;
+                }
             } else {
-                this.silence += batch.length;
-            }
-            this.buffer.push(...batch);
-
-            if ( (this.silence >= this.sampleRate * silenceThresholdMillis * channelCount / 1000 / BUFF_LWEN) || this.buffer.length >= this.bufferLimit) {
-                this.buffer.splice(this.buffer.length - this.silence + this.silencePrefill, this.silence - this.silencePrefill);
-                this.mode = 'playing';
                 this.silence = 0;
-                this.port.postMessage(['mode', {
-                    mode: 'playing'
-                }]);
             }
         } else {
-            // playback
-            for (let channel = 0; channel < channelCount; channel ++) {
-                if (this.buffer.length > 0) {
-                    output[channel].set(this.buffer.shift());
-                } else {
-                    output[channel].fill(0);
-                }
-            }
-
-            if (this.buffer.length === 0) {
-                this.mode = 'waiting';
-                this.port.postMessage(['mode', {
-                    mode: 'waiting',
-                }]);
-            }
         }
         return true;
     }
 
-    sourcePower (source) {
-        let power = 0.;
-        for (let channel = 0; channel < source.length; channel++) {
-            // is it silence?
-            for (let i = 0; i < source[channel].length; i++) {
-                let sample = source[channel][i];
-                power = Math.max(Math.abs(sample), power);
-            }
-        }
-        return power;
+    _shipout(reason) {
+        const raw = this.ring.getRawBuffers(this.channelCount);
+
+        this.port.postMessage(['mode', {
+            mode: MODE_PLAYING,
+            reason,
+            raw,
+        }], raw);
     }
+
+    _handleRequest ({data}) {
+        if (data === 'reset') {
+            this.reset();
+        }
+    }
+}
+
+function amplitude (...buffers) {
+    let amp = 0.0;
+    for (const buffer of buffers) {
+        amp = buffer.reduce( (p, c) => Math.max(p, Math.abs(c)), amp);
+    }
+    return amp;
 }
 
 registerProcessor("talkback-processor", TalkBackProcessor);

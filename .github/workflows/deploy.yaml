@@ -37,7 +37,7 @@ jobs:
         uses: actions/configure-pages@v4
       - name: Build with NodeJS
         # Outputs to the './build' directory by default
-        run: npm i --force && npm run build
+        run: "npm i --force && BUILD_NUMBER=$GITHUB_RUN_NUMBER npm run build"        
       - name: Upload artifact
         # Automatically uploads an artifact from the './_site' directory by default
         uses: actions/upload-pages-artifact@v3

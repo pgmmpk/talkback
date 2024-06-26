@@ -1,20 +1,20 @@
 class Settings {
     _sensitivity = $state(0.05);
-    _threshold = $state(750);
+    _silenceThresholdSecs = $state(0.75);
 
     constructor () {
         const state = localStorage.getItem('settings');
         if (state) {
-            const { sensitivity = 0.05, threshold = 750 } = JSON.parse(state);
+            const { sensitivity = 0.01, silenceThresholdSecs = 0.75 } = JSON.parse(state);
             this._sensitivity = sensitivity;
-            this._threshold = threshold;
+            this._silenceThresholdSecs = silenceThresholdSecs;
         }
     }
 
     save () {
         localStorage.setItem('settings', JSON.stringify({
             sensitivity: this._sensitivity,
-            threshold: this._threshold,
+            silenceThresholdSecs: this._silenceThresholdSecs,
         }, null, 2));
     }
 
@@ -24,9 +24,9 @@ class Settings {
         this.save()
     }
 
-    get threshold () { return this._threshold; }
-    set threshold (value) {
-        this._threshold = value;
+    get silenceThresholdSecs () { return this._silenceThresholdSecs; }
+    set silenceThresholdSecs (value) {
+        this._silenceThresholdSecs = value;
         this.save();
     }
 }

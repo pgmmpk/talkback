@@ -9,25 +9,14 @@
     let waker = null;
     let mode = $state('waiting');
 
-    $effect(() => {
-        settings.sensitivity;
-        settings.threshold;
-        if (talkbackAudio !== null) {
-            talkbackAudio.sensitivity = settings.sensitivity;
-            talkbackAudio.threshold = settings.threshold;
-        }
-    });
-
     let canvas;
     let canvasCtx;
     $effect(() => {
         canvasCtx = canvas.getContext('2d');
     })
 
-    function onmessage(name, value) {
-        if (name === 'mode') {
-            mode = value.mode;
-        }
+    function onmessage(value) {
+        mode = value;
     }
 
     let active = $state(false);
@@ -36,9 +25,10 @@
     async function toggleTalkback() {
         if (talkbackAudio === null) {
             try {
-                talkbackAudio = await talkback({ ...settings, bufferLimit: 100000 });
-                talkbackAudio.threshold = settings.threshold;
-                talkbackAudio.sensitivity = settings.sensitivity;
+                talkbackAudio = await talkback({
+                    sensitivity: settings.sensitivity,
+                    silenceThresholdSecs: settings.silenceThresholdSecs
+                });
                 talkbackAudio.onmessage = onmessage;
                 active = true;
                 needPermission = false;
@@ -71,6 +61,14 @@
 
     let settingsVisible = $state(false);
 
+    async function showSettings () {
+        if (talkbackAudio !== null) {
+            toggleTalkback();
+        }
+        
+        settingsVisible = true;       
+    }
+
     async function share () {
         const self = {
             title: 'Talk Back',
@@ -84,7 +82,7 @@
 <div class="flex flex-col items-center content-center h-screen">
     <div class="flex-none h-8 flex flex-row mb-4 w-full">
         <div class="grow flex flex-row">
-            <button aria-label="settings" class="flex-none w-8 m-2 text-gray-700 disabled:text-gray-400 outline-none" onclick={() => { settingsVisible = true; }} >
+            <button aria-label="settings" class="flex-none w-8 m-2 text-gray-700 disabled:text-gray-400 outline-none" onclick={showSettings} >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                 </svg>
@@ -119,7 +117,7 @@
 {/if}
 
     <div class="flex-1 text-gray-400 flex flex-row items-center">
-        {#if mode === 'listening'}
+        {#if mode === 'recording'}
         <svg class="w-16 h-16 inline" class:text-blue-700={active} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor">
             <path d="M 45 90 C 20.187 90 0 69.813 0 45 C 0 20.187 20.187 0 45 0 c 24.813 0 45 20.187 45 45 C 90 69.813 69.813 90 45 90 z M 45 4 C 22.393 4 4 22.393 4 45 s 18.393 41 41 41 s 41 -18.393 41 -41 S 67.607 4 45 4 z" />
             <circle cx="45" cy="45" r="40" stroke="currentColor" stroke-width="8" />
