@@ -26,6 +26,7 @@
                     silenceSecs: settings.silenceThresholdSecs,
                     timeLimitSecs: 300,
                 });
+                active = true;
 
                 talkbackAudio.addEventListener('mode', e => {
                     console.log({e})
@@ -37,18 +38,17 @@
                 waker = new Waker();
                 await waker.request();
                 mode = 'waiting';
-                active = true;
             } catch (err) {
                 console.error(err);
                 needPermission = true;
                 throw err;
             }
         } else {
+            active = false;
             await waker.release();
             waker = null;
             await talkbackAudio.close();
             talkbackAudio = null;
-            active = false;
             mode = 'waiting';
         }
     }
