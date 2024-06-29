@@ -4,7 +4,7 @@ import { SilenceDetect } from './silence-detect.js';
 
 export class TalkBack {
     constructor ({ threshold = 0.01, silenceSecs = 0.75, timeLimitSecs = 300} = {}) {
-        this.ctx = new AudioContext();
+        this.ctx = new AudioContext({sampleRate: 16000, channelCount: 1});
         this.threshold = threshold;
         this.silenceSecs = silenceSecs;
         this.timeLimitSecs = timeLimitSecs;
@@ -12,7 +12,7 @@ export class TalkBack {
 
     async start () {
         this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const src =  await this.ctx.createMediaStreamSource(this.stream);
+        const src = await this.ctx.createMediaStreamSource(this.stream);
         const sampleRate = this.ctx.sampleRate;
         const channelCount = src.channelCount;
 
