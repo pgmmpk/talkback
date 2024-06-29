@@ -1,6 +1,6 @@
 <script>
-    import { talkback } from './talkback.js';
-    import { DrawOscillogramm } from './draw.js';
+    import { TalkBack } from './talkback.js';
+    // import { DrawOscillogramm } from './draw.js';
     import { Waker } from './waker.js';
     import { settings } from './settings.svelte.js';
     import SettingsPanel from './SettingsPanel.svelte';
@@ -15,33 +15,24 @@
         canvasCtx = canvas.getContext('2d');
     })
 
-    function onmessage(value) {
-        mode = value;
-    }
-
     let active = $state(false);
     let needPermission = $state(false);
     let drawing;
     async function toggleTalkback() {
         if (talkbackAudio === null) {
             try {
-                talkbackAudio = await talkback({
-                    sensitivity: settings.sensitivity,
-                    silenceThresholdSecs: settings.silenceThresholdSecs
+                talkbackAudio = new TalkBack({
+                    threshold: settings.sensitivity,
+                    silenceSecs: settings.silenceThresholdSecs,
+                    timeLimitSecs: 300,
                 });
-                talkbackAudio.onmessage = onmessage;
-                active = true;
-                needPermission = false;
-                drawing = new DrawOscillogramm({
-                    analyser: talkbackAudio.analyser,
-                    canvasCtx,
-                    width: canvas.width,
-                    height: canvas.height,
-                });
-                drawing.start();
+
+                await talkbackAudio.start();
 
                 waker = new Waker();
                 await waker.request();
+                mode = 'waiting';
+                active = true;
             } catch (err) {
                 console.error(err);
                 needPermission = true;
@@ -53,8 +44,6 @@
             await talkbackAudio.close();
             talkbackAudio = null;
             active = false;
-            drawing.stop();
-            drawing = null;
             mode = 'waiting';
         }
     }
