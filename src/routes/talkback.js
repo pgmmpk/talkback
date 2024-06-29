@@ -4,7 +4,7 @@ import { SilenceDetect } from './silence-detect.js';
 
 export class TalkBack {
     constructor ({ threshold = 0.01, silenceSecs = 0.75, timeLimitSecs = 300} = {}) {
-        this.ctx = new AudioContext({sampleRate: 16000, channelCount: 1});
+        this.ctx = new AudioContext({sampleRate: 8000, latencyHint: 'playback'});
         this.threshold = threshold;
         this.silenceSecs = silenceSecs;
         this.timeLimitSecs = timeLimitSecs;
