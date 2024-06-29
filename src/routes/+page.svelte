@@ -27,6 +27,11 @@
                     timeLimitSecs: 300,
                 });
 
+                talkbackAudio.addEventListener('mode', e => {
+                    console.log({e})
+                    mode = e.detail;
+                });
+
                 await talkbackAudio.start();
 
                 waker = new Waker();

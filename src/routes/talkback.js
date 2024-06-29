@@ -2,8 +2,9 @@ import { RecorderNode } from './recorder.js';
 import { trimAudioBuffer, playAudioBuffer } from './utils.js';
 import { SilenceDetect } from './silence-detect.js';
 
-export class TalkBack {
+export class TalkBack extends EventTarget {
     constructor ({ threshold = 0.01, silenceSecs = 0.75, timeLimitSecs = 300} = {}) {
+        super();
         this.ctx = new AudioContext({sampleRate: 8000, latencyHint: 'playback'});
         this.threshold = threshold;
         this.silenceSecs = silenceSecs;
@@ -23,8 +24,10 @@ export class TalkBack {
         const detect = new SilenceDetect(this.ctx, src, this.threshold, this.silenceSecs);
         detect.onspeak = () => {
             recorder.start();
+            this.dispatchEvent(new CustomEvent('mode', { detail: 'recording' }));
         }
         detect.onsilence = async () => {
+            this.dispatchEvent(new CustomEvent('mode', { detail: 'playing' }));
             const ab = await recorder.stop();
             if (ab === null) return;
             const trimmed = trimAudioBuffer(this.ctx, ab, this.threshold, 0.1);
@@ -32,6 +35,7 @@ export class TalkBack {
                 await playAudioBuffer(this.ctx, trimmed);
             }
             detect.start();
+            this.dispatchEvent(new CustomEvent('mode', { detail: 'waiting' }));
         }
         detect.start();
 
