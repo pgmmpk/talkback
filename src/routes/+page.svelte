@@ -15,6 +15,8 @@
         canvasCtx = canvas.getContext('2d');
     })
 
+    let amp = 0.0;
+
     let active = $state(false);
     let needPermission = $state(false);
     async function toggleTalkback() {
@@ -31,10 +33,18 @@
 
                 talkbackAudio.addEventListener('mode', e => {
                     mode = e.detail;
+                    amp = 0.0;
+                    drawAmp(canvasCtx, amp, canvas.width, canvas.height);
                 });
                 talkbackAudio.addEventListener('amp', ev => {
                     if (canvas) {
-                        drawAmp(canvasCtx, ev.detail, canvas.width, canvas.height);
+                        const amplitude = ev.detail;
+                        if (amplitude > amp) {
+                            amp += (amplitude - amp) * 1;
+                        } else {
+                            amp += (amplitude - amp) * 0.1;
+                        }
+                        drawAmp(canvasCtx, amp, canvas.width, canvas.height);
                     }
                 });
 
