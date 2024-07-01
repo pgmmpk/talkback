@@ -25,6 +25,7 @@ export class SilenceDetect {
         
         function onEveryFrame () {
             self.analyser.getFloatTimeDomainData(data);
+            self.onanalyser(data);
             const amp = Math.max(...data.map(x => Math.abs(x)));
 
             if (state === STATE.detectSpeak) {
@@ -52,4 +53,6 @@ export class SilenceDetect {
     onspeak () {}
 
     onsilence () {}
+
+    onanalyser () {}
 }

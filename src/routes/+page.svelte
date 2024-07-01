@@ -1,6 +1,6 @@
 <script>
     import { TalkBack } from './talkback.js';
-    // import { DrawOscillogramm } from './draw.js';
+    import { drawBuffer } from './draw.js';
     import { Waker } from './waker.js';
     import { settings } from './settings.svelte.js';
     import SettingsPanel from './SettingsPanel.svelte';
@@ -29,8 +29,12 @@
                 active = true;
 
                 talkbackAudio.addEventListener('mode', e => {
-                    console.log({e})
                     mode = e.detail;
+                });
+                talkbackAudio.addEventListener('analyser', ev => {
+                    if (canvas) {
+                        drawBuffer(canvasCtx, ev.detail, canvas.width, canvas.height);
+                    }
                 });
 
                 await talkbackAudio.start();
