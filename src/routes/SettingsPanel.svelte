@@ -28,6 +28,14 @@
             <input type="range" class="accent-gray-700 grow" id="silence-threshold-millis" name="silence-threshold-millis" aria-label="Silence Threhold" min="0" max="1" step="0.01" bind:value={settings.silenceThresholdSecs} />
             <div class="w-12 ml-2 inline-block">{settings.silenceThresholdSecs.toFixed(2)}</div>
     </div>
+    <div class="my-8 ml-4 flex justify-center">
+        <label class="mr-4 p-2" for="#sample-rate">Sample rate:</label>
+        <select class="p-2 rounded px-4 border border-gray-700 outline-none" id="sample-rate" bind:value={settings.sampleRate} >
+            <option value={8000}>{8000}</option>
+            <option value={16000}>{16000}</option>
+            <option value={48000}>{48000}</option>
+        </select>
+    </div>
     <div class="grow"></div>
     <div class="text-sm text-center text-gray-500 mb-2">build #{import.meta.env.BUILD_NUMBER ?? 'dev'}</div>
 </div>

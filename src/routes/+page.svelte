@@ -17,11 +17,11 @@
 
     let active = $state(false);
     let needPermission = $state(false);
-    let drawing;
     async function toggleTalkback() {
         if (talkbackAudio === null) {
             try {
                 talkbackAudio = new TalkBack({
+                    sampleRate: settings.sampleRate,
                     threshold: settings.sensitivity,
                     silenceSecs: settings.silenceThresholdSecs,
                     timeLimitSecs: 300,

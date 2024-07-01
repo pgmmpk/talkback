@@ -3,9 +3,9 @@ import { trimAudioBuffer, playAudioBuffer } from './utils.js';
 import { SilenceDetect } from './silence-detect.js';
 
 export class TalkBack extends EventTarget {
-    constructor ({ threshold = 0.01, silenceSecs = 0.75, timeLimitSecs = 300} = {}) {
+    constructor ({ sampleRate = 8000, threshold = 0.01, silenceSecs = 0.75, timeLimitSecs = 300} = {}) {
         super();
-        this.ctx = new AudioContext({sampleRate: 8000, latencyHint: 'playback'});
+        this.ctx = new AudioContext({ sampleRate, latencyHint: 'playback' });
         this.threshold = threshold;
         this.silenceSecs = silenceSecs;
         this.timeLimitSecs = timeLimitSecs;
