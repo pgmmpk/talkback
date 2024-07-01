@@ -22,6 +22,7 @@
             try {
                 talkbackAudio = new TalkBack({
                     sampleRate: settings.sampleRate,
+                    autoGainControl: settings.autoGainControl,
                     threshold: settings.sensitivity,
                     silenceSecs: settings.silenceThresholdSecs,
                     timeLimitSecs: 300,

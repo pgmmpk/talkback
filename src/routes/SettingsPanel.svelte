@@ -36,6 +36,13 @@
             <option value={48000}>{48000}</option>
         </select>
     </div>
+    <div class="my-8 ml-4 flex justify-center">
+        <label class="inline-flex items-center cursor-pointer">
+            <input type="checkbox" value="" bind:checked={settings.autoGainControl} class="sr-only peer">
+            <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-none dark:peer-focus:ring-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div>
+            <span class="ms-4 font-medium text-gray-900 dark:text-gray-700">Auto Gain Control</span>
+        </label>
+    </div>
     <div class="grow"></div>
     <div class="text-sm text-center text-gray-500 mb-2">build #{import.meta.env.BUILD_NUMBER ?? 'dev'}</div>
 </div>
