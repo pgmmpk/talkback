@@ -37,8 +37,8 @@ export class TalkBack extends EventTarget {
             detect.start();
             this.dispatchEvent(new CustomEvent('mode', { detail: 'waiting' }));
         }
-        detect.onanalyser = data => {
-            this.dispatchEvent(new CustomEvent('analyser', { detail: data }));
+        detect.onamp = amp => {
+            this.dispatchEvent(new CustomEvent('amp', { detail: amp }));
         }
         detect.start();
 

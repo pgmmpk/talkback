@@ -27,6 +27,7 @@ export class SilenceDetect {
             self.analyser.getFloatTimeDomainData(data);
             self.onanalyser(data);
             const amp = Math.max(...data.map(x => Math.abs(x)));
+            self.onamp(amp);
 
             if (state === STATE.detectSpeak) {
                 if (amp >= self.threshold) {
@@ -55,4 +56,6 @@ export class SilenceDetect {
     onsilence () {}
 
     onanalyser () {}
+
+    onamp () {}
 }

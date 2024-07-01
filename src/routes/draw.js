@@ -17,3 +17,11 @@ export function drawBuffer (canvasCtx, buffer, width, height) {
     canvasCtx.lineTo(width, height / 2);
     canvasCtx.stroke();
 }
+
+export function drawAmp (canvasCtx, amp, width, height) {
+    canvasCtx.fillStyle = "rgb(255, 255, 255)";
+    canvasCtx.fillRect(0, 0, width, height);
+    canvasCtx.fillStyle = "rgb(248, 113, 14)";
+
+    canvasCtx.fillRect(width * (0.5 - amp * 0.5), 0, width * amp, height);
+}
