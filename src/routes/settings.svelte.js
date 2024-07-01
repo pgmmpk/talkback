@@ -1,12 +1,12 @@
 class Settings {
-    _sampleRate = $state(8000);
+    _sampleRate = $state(16000);
     _sensitivity = $state(0.05);
     _silenceThresholdSecs = $state(0.75);
 
     constructor () {
         const state = localStorage.getItem('settings');
         if (state) {
-            const { sensitivity = 0.01, silenceThresholdSecs = 0.75, sampleRate = 8000 } = JSON.parse(state);
+            const { sensitivity = 0.01, silenceThresholdSecs = 0.75, sampleRate = 16000 } = JSON.parse(state);
             this._sampleRate = sampleRate;
             this._sensitivity = sensitivity;
             this._silenceThresholdSecs = silenceThresholdSecs;
